@@ -3889,8 +3889,7 @@ bool isChangePermanentPasswordDisabled() =>
 bool isChangeIdDisabled() =>
     bind.mainGetBuildinOption(key: kOptionDisableChangeId) == 'Y';
 
-bool isUnlockPinDisabled() =>
-    bind.mainGetBuildinOption(key: kOptionDisableUnlockPin) == 'Y';
+bool isUnlockPinDisabled() => true;
 
 bool? _isCustomClient;
 bool get isCustomClient {
