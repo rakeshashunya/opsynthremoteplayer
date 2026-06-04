@@ -631,7 +631,6 @@ jobs:
 
 
   build-for-macOS:
-    if: false
     name: ${{ matrix.job.target }}
     runs-on: ${{ matrix.job.os }}
     needs: [generate-bridge]
@@ -666,6 +665,9 @@ jobs:
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
         with:
           submodules: recursive
+
+      - name: Apply Custom Configurations
+        run: python3 apply-branding.py
 
       - name: Import the codesign cert
         if: env.MACOS_P12_BASE64 != null
@@ -712,13 +714,7 @@ jobs:
 
       - name: Install NASM
         run: |
-          # Install NASM 2.16.x from official release.
-          # Do NOT use `brew install nasm` which installs NASM 3.x.
-          # NASM 3.x is a complete rewrite with incompatible CLI options and removed features.
-          # aom and other multimedia libraries require NASM 2.x for x86/x86_64 assembly.
-          wget https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/macosx/nasm-2.16.03-macosx.zip
-          unzip nasm-2.16.03-macosx.zip
-          sudo cp nasm-2.16.03/nasm /usr/local/bin/nasm
+          brew install nasm
           nasm --version
 
       - name: Install flutter
@@ -855,7 +851,7 @@ jobs:
       - build-for-windows-flutter
       - build-for-windows-sciter
     runs-on: ubuntu-latest
-    if: false
+    if: ${{ inputs.upload-artifact }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
