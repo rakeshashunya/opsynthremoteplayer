@@ -640,7 +640,7 @@ class _DesktopTabState extends State<DesktopTab>
                         ),
                         Offstage(
                             offstage: !showTitle,
-                            child: const Text(
+                            child: Text(
                               appName,
                               style: TextStyle(fontSize: 13),
                             ).marginOnly(left: 2))
