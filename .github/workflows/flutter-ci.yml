@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - master
+      - rustdesk-client
     paths-ignore:
       - ".github/**"
       - "docs/**"
