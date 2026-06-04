@@ -46,6 +46,7 @@ env:
   MACOS_P12_BASE64: "${{ secrets.MACOS_P12_BASE64 }}"
   UPLOAD_ARTIFACT: "${{ inputs.upload-artifact }}"
   SIGN_BASE_URL: "${{ secrets.SIGN_BASE_URL }}-2"
+  AZURE_TENANT_ID: "${{ secrets.AZURE_TENANT_ID }}"
 
 jobs:
   generate-bridge:
@@ -244,7 +245,7 @@ jobs:
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./rustdesk/
 
       - name: Azure Trusted Signing (rustdesk folder)
-        if: env.UPLOAD_ARTIFACT == 'true' && secrets.AZURE_TENANT_ID != null
+        if: env.UPLOAD_ARTIFACT == 'true' && env.AZURE_TENANT_ID != ''
         uses: azure/artifact-signing-action@v2
         with:
           endpoint: ${{ vars.TRUSTED_SIGNING_ENDPOINT }}
@@ -289,7 +290,7 @@ jobs:
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./SignOutput
 
       - name: Azure Trusted Signing (SignOutput exe)
-        if: env.UPLOAD_ARTIFACT == 'true' && secrets.AZURE_TENANT_ID != null
+        if: env.UPLOAD_ARTIFACT == 'true' && env.AZURE_TENANT_ID != ''
         uses: azure/artifact-signing-action@v2
         with:
           endpoint: ${{ vars.TRUSTED_SIGNING_ENDPOINT }}
@@ -303,7 +304,7 @@ jobs:
           cache-dependencies: false
 
       - name: Azure Trusted Signing (SignOutput msi)
-        if: env.UPLOAD_ARTIFACT == 'true' && secrets.AZURE_TENANT_ID != null
+        if: env.UPLOAD_ARTIFACT == 'true' && env.AZURE_TENANT_ID != ''
         uses: azure/artifact-signing-action@v2
         with:
           endpoint: ${{ vars.TRUSTED_SIGNING_ENDPOINT }}
@@ -456,7 +457,7 @@ jobs:
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./Release/
 
       - name: Azure Trusted Signing (Release folder)
-        if: env.UPLOAD_ARTIFACT == 'true' && secrets.AZURE_TENANT_ID != null
+        if: env.UPLOAD_ARTIFACT == 'true' && env.AZURE_TENANT_ID != ''
         uses: azure/artifact-signing-action@v2
         with:
           endpoint: ${{ vars.TRUSTED_SIGNING_ENDPOINT }}
@@ -487,7 +488,7 @@ jobs:
           BASE_URL=${{ env.SIGN_BASE_URL }} SECRET_KEY=${{ secrets.SIGN_SECRET_KEY }} python3 res/job.py sign_files ./SignOutput/
 
       - name: Azure Trusted Signing (SignOutput exe)
-        if: env.UPLOAD_ARTIFACT == 'true' && secrets.AZURE_TENANT_ID != null
+        if: env.UPLOAD_ARTIFACT == 'true' && env.AZURE_TENANT_ID != ''
         uses: azure/artifact-signing-action@v2
         with:
           endpoint: ${{ vars.TRUSTED_SIGNING_ENDPOINT }}
