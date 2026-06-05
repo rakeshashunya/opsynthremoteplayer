@@ -22,10 +22,10 @@ def main():
             'pub const RS_PUB_KEY: &str = "";',
             'pub const RS_PUB_KEY: &str = "2xobsb9zEqBv81w2AZ5r7RuKOtJ9H23ZT3RzOWjGnBE=";'
         ),
-        # Enforcing connection mode: client host-only (is_incoming_only returns true)
+        # Enforcing connection mode: client host-only (is_incoming_only returns true unless launched with connect/play args)
         (
             'pub fn is_incoming_only() -> bool {\n    HARD_SETTINGS\n        .read()\n        .unwrap()\n        .get("conn-type")\n        .map_or(false, |x| x == ("incoming"))\n}',
-            'pub fn is_incoming_only() -> bool {\n    true\n}'
+            'pub fn is_incoming_only() -> bool {\n    let args: Vec<String> = std::env::args().collect();\n    for arg in args {\n        let arg_lower = arg.to_lowercase();\n        if arg_lower.starts_with("opsynthremoteplayer://")\n            || arg_lower.starts_with("rustdesk://")\n            || arg_lower == "--connect"\n            || arg_lower == "--play"\n            || arg_lower == "--file-transfer"\n            || arg_lower == "--view-camera"\n        {\n            return false;\n        }\n    }\n    true\n}'
         ),
         # Enforcing is_disable_settings to return true
         (
