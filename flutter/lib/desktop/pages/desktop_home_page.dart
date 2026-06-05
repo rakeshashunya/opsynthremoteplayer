@@ -222,7 +222,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
                                   ?.color
                                   ?.withOpacity(0.5)),
                         ).marginOnly(top: 5),
-                        buildPopupMenu(context)
+                        if (!bind.isDisableSettings()) buildPopupMenu(context)
                       ],
                     ),
                   ),

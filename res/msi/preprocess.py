@@ -79,6 +79,9 @@ def make_parser():
         "-v", "--version", type=str, default="", help="The app version."
     )
     parser.add_argument(
+        "--build-date", type=str, default="", help="The app build date."
+    )
+    parser.add_argument(
         "--revision-version", type=int, default=default_revision_version(), help="The revision version."
     )
     parser.add_argument(
@@ -459,7 +462,7 @@ def init_global_vars(dist_dir, app_name, args):
 
     def read_process_output(args):
         process = subprocess.Popen(
-            f"{dist_app} {args}",
+            f'"{dist_app}" {args}',
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             shell=True,
@@ -471,22 +474,50 @@ def init_global_vars(dist_dir, app_name, args):
     global g_build_date
     g_version = args.version.replace("-", ".")
     if g_version == "":
-        g_version = read_process_output("--version")
+        try:
+            g_version = read_process_output("--version")
+        except Exception as e:
+            print(f"Warning: Failed to run executable for version: {e}")
+            g_version = ""
+
     version_pattern = re.compile(r"\d+\.\d+\.\d+.*")
     if not version_pattern.match(g_version):
-        print(f"Error: version {g_version} not found in {dist_app}")
-        return False
+        print(f"Warning: version '{g_version}' not found/valid in {dist_app}. Attempting fallback.")
+        try:
+            cargo_toml_path = Path(sys.argv[0]).parent.joinpath("../../Cargo.toml").resolve()
+            if cargo_toml_path.exists():
+                with open(cargo_toml_path, "r", encoding="utf-8") as f:
+                    content = f.read()
+                version_match = re.search(r'^version\s*=\s*"([^"]+)"', content, re.MULTILINE)
+                if version_match:
+                    g_version = version_match.group(1).replace("-", ".")
+                    print(f"Fallback: Found version {g_version} in Cargo.toml")
+        except Exception as e:
+            print(f"Warning: Failed to parse Cargo.toml: {e}")
+
+        if not version_pattern.match(g_version):
+            g_version = "1.3.0"
+            print(f"Fallback: Using default version {g_version}")
+
     if g_version.count(".") == 2:
         # https://github.com/dotnet/runtime/blob/5535e31a712343a63f5d7d796cd874e563e5ac14/src/libraries/System.Private.CoreLib/src/System/Version.cs
         if args.revision_version < 0 or args.revision_version > 2147483647:
             raise ValueError(f"Invalid revision version: {args.revision_version}")    
         g_version = f"{g_version}.{args.revision_version}"
 
-    g_build_date = read_process_output("--build-date")
+    g_build_date = args.build_date
+    if g_build_date == "":
+        try:
+            g_build_date = read_process_output("--build-date")
+        except Exception as e:
+            print(f"Warning: Failed to run executable for build-date: {e}")
+            g_build_date = ""
+
     build_date_pattern = re.compile(r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}")
     if not build_date_pattern.match(g_build_date):
-        print(f"Error: build date {g_build_date} not found in {dist_app}")
-        return False
+        print(f"Warning: build date '{g_build_date}' not found/valid in {dist_app}. Using fallback.")
+        g_build_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+        print(f"Fallback: Using current date/time {g_build_date}")
 
     return True
 

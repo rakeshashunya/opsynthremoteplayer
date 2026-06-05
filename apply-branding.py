@@ -27,6 +27,11 @@ def main():
             'pub fn is_incoming_only() -> bool {\n    HARD_SETTINGS\n        .read()\n        .unwrap()\n        .get("conn-type")\n        .map_or(false, |x| x == ("incoming"))\n}',
             'pub fn is_incoming_only() -> bool {\n    true\n}'
         ),
+        # Enforcing is_disable_settings to return true
+        (
+            'pub fn is_disable_settings() -> bool {\n    is_some_hard_opton("disable-settings")\n}',
+            'pub fn is_disable_settings() -> bool {\n    true\n}'
+        ),
         # Setting the app name RwLock default to OpsynthRemotePlayer
         (
             'pub static ref APP_NAME: RwLock<String> = RwLock::new("RustDesk".to_owned());',
