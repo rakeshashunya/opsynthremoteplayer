@@ -31,6 +31,11 @@ else()
     )
 endif()
 
+vcpkg_replace_string("${SOURCE_PATH}/build/cmake/aom_optimization.cmake"
+    "if(NOT \"\${nasm_helptext}\" MATCHES \"-Ox\")"
+    "if(FALSE)"
+)
+
 set(aom_target_cpu "")
 if(VCPKG_TARGET_IS_UWP OR (VCPKG_TARGET_IS_WINDOWS AND VCPKG_TARGET_ARCHITECTURE MATCHES "^arm"))
     # UWP + aom's assembler files result in weirdness and build failures

@@ -1,0 +1,14 @@
+diff --git a/build/cmake/aom_optimization.cmake b/build/cmake/aom_optimization.cmake
+index dde4a0a..a18357f 100644
+--- a/build/cmake/aom_optimization.cmake
++++ b/build/cmake/aom_optimization.cmake
+@@ -214,10 +214,6 @@ function(test_nasm)
+   execute_process(COMMAND ${CMAKE_ASM_NASM_COMPILER} -hf
+                   OUTPUT_VARIABLE nasm_helptext)
+ 
+-  if(NOT "${nasm_helptext}" MATCHES "-Ox")
+-    message(
+-      FATAL_ERROR "Unsupported nasm: multipass optimization not supported.")
+-  endif()
+-
+   if("${AOM_TARGET_CPU}" STREQUAL "x86")
