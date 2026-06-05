@@ -14,18 +14,22 @@ def main():
     replacements = [
         # Hardcoding the rendezvous servers
         (
-            'pub const RENDEZVOUS_SERVERS: &[&str] = &["router.rustdesk.com"];',
+            'pub const RENDEZVOUS_SERVERS: &[&str] = &["rs-ny.rustdesk.com"];',
             'pub const RENDEZVOUS_SERVERS: &[&str] = &["opsynth.ashunya.com"];'
         ),
         # Hardcoding the public encryption key
         (
-            'pub const RS_PUB_KEY: &str = "";',
+            'pub const RS_PUB_KEY: &str = "OeVuKk5nlHiXp+APNn0Y3pC1Iwpwn44JGqrQCsWqmBw=";',
             'pub const RS_PUB_KEY: &str = "2xobsb9zEqBv81w2AZ5r7RuKOtJ9H23ZT3RzOWjGnBE=";'
         ),
-        # Enforcing connection mode: client host-only (is_incoming_only returns true)
+        # Enforcing connection mode: client outbound-only (is_incoming_only returns false, is_outgoing_only returns true)
         (
             'pub fn is_incoming_only() -> bool {\n    HARD_SETTINGS\n        .read()\n        .unwrap()\n        .get("conn-type")\n        .map_or(false, |x| x == ("incoming"))\n}',
-            'pub fn is_incoming_only() -> bool {\n    true\n}'
+            'pub fn is_incoming_only() -> bool {\n    false\n}'
+        ),
+        (
+            'pub fn is_outgoing_only() -> bool {\n    HARD_SETTINGS\n        .read()\n        .unwrap()\n        .get("conn-type")\n        .map_or(false, |x| x == ("outgoing"))\n}',
+            'pub fn is_outgoing_only() -> bool {\n    true\n}'
         ),
         # Enforcing is_disable_settings to return true
         (
