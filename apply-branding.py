@@ -176,5 +176,25 @@ def main():
     else:
         print("No changes were made to config.rs")
 
+    # Path for peer_tab_page.dart
+    peer_tab_path = os.path.join('flutter', 'lib', 'common', 'widgets', 'peer_tab_page.dart')
+    if os.path.exists(peer_tab_path):
+        print(f"Reading {peer_tab_path}...")
+        with open(peer_tab_path, 'r', encoding='utf-8') as f:
+            dart_content = f.read()
+
+        target = 'Widget _createSwitchBar(BuildContext context) {'
+        replacement = 'Widget _createSwitchBar(BuildContext context) {\n    return const SizedBox.shrink();'
+        if target in dart_content:
+            dart_content = dart_content.replace(target, replacement)
+            with open(peer_tab_path, 'w', encoding='utf-8', newline='\n') as f:
+                f.write(dart_content)
+            print("Successfully updated peer_tab_page.dart to hide tab switcher options")
+        else:
+            if replacement in dart_content:
+                print("Skipping peer_tab_page.dart (already applied)")
+            else:
+                print("Warning: Target switch bar signature not found in peer_tab_page.dart")
+
 if __name__ == '__main__':
     main()
